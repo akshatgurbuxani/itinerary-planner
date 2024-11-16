@@ -26,19 +26,6 @@ def get_final_prompt(user_preference, events_text=None):
     Returns:
         str: Formatted prompt for the LLM
     """
-    
-    # Define the expected structure explicitly
-    plan_structure = {
-        "day": {
-            "segment": {
-                "time": "Time in HH:MM AM/PM format",
-                "activity/restaurant": "Name of activity or restaurant",
-                "location": "Street address",
-                "type": "Type of activity or cuisine type",
-                "details": "Brief description (max 100 characters)"
-            }
-        }
-    }
 
     # Build the prompt with clear instructions and constraints
     events_section = f"\nConsider these upcoming events in Boston:\n{events_text}\n" if events_text else ""
@@ -62,6 +49,7 @@ Return ONLY a JSON object with the following structure:
             "activity" or "restaurant": "name",
             "location": "street address",
             "type" or "cuisine": "category",
+            "price_per_person": "$XX" / FREE,
             "details": "brief description"
         }}
     }},
@@ -71,6 +59,7 @@ Return ONLY a JSON object with the following structure:
             "activity" or "restaurant": "name",
             "location": "street address",
             "type" or "cuisine": "category",
+            "price_per_person": "$XX" / FREE,
             "details": "brief description"
         }}
     }}

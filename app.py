@@ -35,11 +35,11 @@ def parse_llm_response(response_text):
         return None
 
 
-def get_weekend_plan(food_prefs, event_types):
+def get_weekend_plan(food_prefs, event_types, budget_range):
     # This is a placeholder that simulates the LLM response
     # Later, replace this with actual LLM API call
 
-    user_preference = f"food preferences: {food_prefs}, type of places or events preferred to go: {event_types}"
+    user_preference = f"food preferences: {food_prefs}, type of places or events preferred to go: {event_types} and budget range: {budget_range}"
     events_text = get_events_string("events.csv")
     prompt = get_final_prompt(user_preference, events_text)
 
@@ -129,9 +129,13 @@ def main():
     col1, col2 = st.columns(2)
     
     with col1:
-        food_pref = st.text_input(
-            "🍽️ Food Preferences:",
-            placeholder="e.g., Italian, Seafood, Vegetarian"
+        food_prefs = st.text_input("What are your food preferences? (e.g., vegetarian, seafood, Italian)")
+        
+        # Add just the budget input
+        budget_range = st.select_slider(
+            "What's your budget per person for the entire weekend?",
+            options=['$0-50', '$50-100', '$100-200', '$200-300', '$300+'],
+            value='$100-200'
         )
     
     with col2:
@@ -150,11 +154,11 @@ def main():
         )
 
     if st.button("🗓️ Generate Weekend Plan", type="primary"):
-        if not food_pref or not selected_events:
+        if not food_prefs or not selected_events:
             st.warning("⚠️ Please enter both food preferences and interests")
         else:
             with st.spinner('Creating your perfect weekend plan...'):
-                weekend_plan = get_weekend_plan(food_pref, selected_events)
+                weekend_plan = get_weekend_plan(food_prefs, selected_events, budget_range)
             
             # Display the weekend plan
             tab1, tab2 = st.tabs(["Saturday", "Sunday"])
@@ -166,12 +170,14 @@ def main():
                         if 'restaurant' in details:
                             st.markdown(f"""
                                 🍽️ **{details['restaurant']}** - {details['cuisine']}  
+                                💰 **Price:** {details['price_per_person']}  
                                 📍 {details['location']}  
                                 ℹ️ {details['details']}
                             """)
                         else:
                             st.markdown(f"""
                                 🎯 **{details['activity']}**  
+                                💰 **Price:** {details['price_per_person']}  
                                 📍 {details['location']}  
                                 ℹ️ {details['details']}
                             """)
@@ -183,12 +189,14 @@ def main():
                         if 'restaurant' in details:
                             st.markdown(f"""
                                 🍽️ **{details['restaurant']}** - {details['cuisine']}  
+                                💰 **Price:** {details['price_per_person']}  
                                 📍 {details['location']}  
                                 ℹ️ {details['details']}
                             """)
                         else:
                             st.markdown(f"""
                                 🎯 **{details['activity']}**  
+                                💰 **Price:** {details['price_per_person']}  
                                 📍 {details['location']}  
                                 ℹ️ {details['details']}
                             """)
