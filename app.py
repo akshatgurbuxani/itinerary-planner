@@ -6,6 +6,42 @@ import re
 from datetime import datetime, timedelta
 
 
+
+def set_background_image(image_url):
+    st.markdown(
+        f"""
+        <style>
+        /* Ensure the background image covers the entire app */
+        .stApp {{
+            background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url({image_url}); /* Adding a white overlay */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh; /* Ensure minimum height for the background */
+        }}
+
+
+        /* Specific targeting for input placeholders */
+        .stTextInput input::placeholder, .stTextArea textarea::placeholder {{
+            color: black; /* Placeholder text color */
+        }}
+
+        /* Customizing button to be black */
+        .stButton > button {{
+            background-color: black !important; /* Button background color */
+            color: white !important; /* Button text color */
+            border: 1px solid white; /* Adding a subtle white border */
+        }}
+        .stButton > button:hover {{
+            background-color: #333 !important; /* Darker shade on hover */
+            color: white !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
 def parse_llm_response(response_text):
     """
     Parse the LLM response and extract the JSON content.
@@ -82,7 +118,11 @@ def display_trip_plan(plan):
 
 
 def main():
-    st.set_page_config(page_title="Boston Event Planner", page_icon="📅", layout="wide")
+
+    st.set_page_config(page_title="Boston Event Planner", page_icon="📅", layout="wide")  # Move this to the top
+    background_image_url = "https://images.unsplash.com/photo-1516803169923-cf5fd5f6858e?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"  # Replace with your image URL
+    set_background_image(background_image_url)
+    
     
     st.title("🌟 PlanAsYouGo: Real-Time Itinerary Builder")
     st.markdown("We don’t just plan. We make spontaneity look organized.")
