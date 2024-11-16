@@ -1,12 +1,10 @@
-import os
 import google.generativeai as genai
-from dotenv import load_dotenv
+import streamlit as st
 
 def get_response(msg):
 
-    load_dotenv()
 
-    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
     # Create the model
     generation_config = {
@@ -32,5 +30,6 @@ def get_response(msg):
 
 if __name__ == "__main__":
     user_preference = {}
-    get_response(f"Based on the user's interest in {user_preference}, recommend an event from the following list:\n{events_text}\n\nWhich event would you recommend!")
+    # get_response(f"Based on the user's interest in {user_preference}, recommend an event from the following list:\n{events_text}\n\nWhich event would you recommend!")
 
+    print(get_response("Hello"))
