@@ -10,5 +10,4 @@ __pycache__/
 env/
 venv/
 ENV/
-*.csv
 .DS_Store
