@@ -35,11 +35,11 @@ def parse_llm_response(response_text):
         return None
 
 
-def get_weekend_plan(food_prefs, event_types):
+def get_weekend_plan(food_prefs, event_types, budget_range):
     # This is a placeholder that simulates the LLM response
     # Later, replace this with actual LLM API call
 
-    user_preference = f"food preferences: {food_prefs}, type of places or events preferred to go: {event_types}"
+    user_preference = f"food preferences: {food_prefs}, type of places or events preferred to go: {event_types} and budget range: {budget_range}"
     events_text = get_events_string("events.csv")
     prompt = get_final_prompt(user_preference, events_text)
 
@@ -122,39 +122,62 @@ def get_weekend_plan(food_prefs, event_types):
 def main():
     st.set_page_config(page_title="Boston Weekend Planner", page_icon="📅", layout="wide")
     
+    # Add a small markdown to reduce space above the title
+    st.markdown("<style>h1 {margin-top: -50px;}</style>", unsafe_allow_html=True)
+    
     st.title("🌟 Boston Weekend Planner")
     st.markdown("Plan your perfect weekend in Boston with personalized activities and dining recommendations!")
+    
+    st.markdown("---")  # Add a divider
     
     # User Preferences
     col1, col2 = st.columns(2)
     
     with col1:
-        food_pref = st.text_input(
-            "🍽️ Food Preferences:",
-            placeholder="e.g., Italian, Seafood, Vegetarian"
+        st.subheader("🍽️ Food & Budget")
+        food_prefs = st.text_input(
+            "What are your food preferences?",
+            placeholder="e.g., vegetarian, seafood, Italian",
+            help="Tell us about your dietary preferences or favorite cuisines"
+        )
+        
+        # Minimal vertical space
+        st.markdown("")  # Add minimal vertical space
+        
+        budget_range = st.select_slider(
+            "💰 What's your budget per person for the weekend?",
+            options=['$0-50', '$50-100', '$100-200', '$200-300', '$300+'],
+            value='$100-200'
         )
     
     with col2:
+        st.subheader("🎯 Interests")
         event_options = [
-            "Arts and Culture",
-            "Music and Nightlife",
-            "Food and Drink",
-            "Outdoor and Recreation",
-            "Educational and Workshops",
-            "Seasonal and Special Events",
-            "Family and Community"
+            "🎨 Arts and Culture",
+            "🎵 Music and Nightlife",
+            "🍷 Food and Drink",
+            "🌳 Outdoor and Recreation",
+            "📚 Educational and Workshops",
+            "🎪 Seasonal and Special Events",
+            "👨‍👩‍👧‍👦 Family and Community"
         ]
         selected_events = st.multiselect(
-            "🎭 What interests you?",
-            event_options
+            "What interests you?",
+            event_options,
+            help="Select multiple interests to personalize your itinerary"
         )
 
-    if st.button("🗓️ Generate Weekend Plan", type="primary"):
-        if not food_pref or not selected_events:
+    # Minimal vertical space
+    st.markdown("")  # Add minimal vertical space
+    
+    if st.button("🗓️ Generate Weekend Plan", type="primary", use_container_width=True):
+        if not food_prefs or not selected_events:
             st.warning("⚠️ Please enter both food preferences and interests")
         else:
-            with st.spinner('Creating your perfect weekend plan...'):
-                weekend_plan = get_weekend_plan(food_pref, selected_events)
+            with st.spinner('✨ Creating your perfect weekend plan...'):
+                # Clean up selected events (remove emojis for processing)
+                cleaned_events = [event.split(' ', 1)[1] for event in selected_events]
+                weekend_plan = get_weekend_plan(food_prefs, cleaned_events, budget_range)
             
             # Display the weekend plan
             tab1, tab2 = st.tabs(["Saturday", "Sunday"])
@@ -166,16 +189,18 @@ def main():
                         if 'restaurant' in details:
                             st.markdown(f"""
                                 🍽️ **{details['restaurant']}** - {details['cuisine']}  
+                                💰 **Price:** {details['price_per_person']}  
                                 📍 {details['location']}  
                                 ℹ️ {details['details']}
                             """)
                         else:
                             st.markdown(f"""
                                 🎯 **{details['activity']}**  
+                                💰 **Price:** {details['price_per_person']}  
                                 📍 {details['location']}  
                                 ℹ️ {details['details']}
                             """)
-            
+
             with tab2:
                 st.header("Sunday")
                 for time_slot, details in weekend_plan["Sunday"].items():
@@ -183,12 +208,14 @@ def main():
                         if 'restaurant' in details:
                             st.markdown(f"""
                                 🍽️ **{details['restaurant']}** - {details['cuisine']}  
+                                💰 **Price:** {details['price_per_person']}  
                                 📍 {details['location']}  
                                 ℹ️ {details['details']}
                             """)
                         else:
                             st.markdown(f"""
                                 🎯 **{details['activity']}**  
+                                💰 **Price:** {details['price_per_person']}  
                                 📍 {details['location']}  
                                 ℹ️ {details['details']}
                             """)
