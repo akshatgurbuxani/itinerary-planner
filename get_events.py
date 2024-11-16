@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 def write_events_to_csv(events):
     # Define the CSV file name
-    filename = 'events.csv'
+    filename = 'eventsWeek.csv'
     
     # Define the field names for the CSV
     fieldnames = ['name', 'start_date', 'start_time', 'end_date', 'end_time', 'location', 'street_address', 'admission', 'categories', 'event_website', 'description']
@@ -167,5 +167,5 @@ def scrape_events(url):
 
 
 # Example usage:
-events_info = scrape_events('https://www.thebostoncalendar.com/events/89-things-to-do-in-boston-this-weekend--2')
+events_info = scrape_events('https://www.thebostoncalendar.com/events/73-free-things-to-do-in-boston-this-week-nov-12-17-2024')
 write_events_to_csv(events_info)
